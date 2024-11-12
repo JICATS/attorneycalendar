@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagar Cita</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h1>Pagar Cita</h1>
+    <form id="payment-form" action="{{ url_for('agendar') }}" method="POST">
+        <div id="card-element"><!-- A Stripe Element will be inserted here. --></div>
+        <button id="submit">Pagar</button>
+        <div id="error-message"><!-- Display error message here. --></div>
+    </form>
+
+    <script>
+        console.log("JavaScript cargado");
+        const stripe = Stripe('pk_test_51QHPbtL1y4d5B8BaZ7Y1daDH7eFzemwLfKWWrznUcgaUxHjSWjOxmAss0tHkSwmjPBd8aSfaKx8lGVA0ixWdxaN600Uv2r9u2x'); // Reemplaza con tu clave pública
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            console.log("Intentando crear un método de pago...");
+            const { paymentMethod, error } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+            });
+
+            if (error) {
+                document.getElementById('error-message').innerText = error.message;
+            } else {
+                // Crea un campo oculto para el token
+                const stripeTokenInput = document.createElement('input');
+                stripeTokenInput.setAttribute('type', 'hidden');
+                stripeTokenInput.setAttribute('name', 'stripeToken');
+                stripeTokenInput.setAttribute('value', paymentMethod.id);
+                form.appendChild(stripeTokenInput);
+
+                // Envía el formulario
+                form.submit();
+            }
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+</body>
+</html>

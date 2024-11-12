@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Cita</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Agendar Cita</h1>
+        <form method="post" id="agendarForm" action="/agendar">
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" required class="form-control"><br>
+
+            <label for="email">Email:</label>
+            <input type="email" name="email" required class="form-control"><br>
+
+            <label for="telefono">Teléfono:</label>
+            <input type="text" name="telefono" required class="form-control"><br>
+
+            <label for="fecha">Fecha:</label>
+            <select name="fecha" id="fecha" required class="form-control">
+                {% for fecha in fechas_disponibles %}
+                    <option value="{{ fecha.fecha }}">{{ fecha.fecha }}</option>
+                {% endfor %}
+            </select><br>
+
+            <label for="hora">Hora:</label>
+            <select name="hora" id="hora" required class="form-control">
+                <!-- Horarios se llenarán dinámicamente con JavaScript -->
+            </select><br>
+            
+
+            <button type="submit" class="btn btn-primary">Agendar y Pagar</button>
+        </form>
+
+        <!-- Mensaje de horarios disponibles -->
+        <div id="horariosMensaje">
+            <p>Selecciona una fecha para ver los horarios disponibles.</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Cuando se selecciona una fecha, se realiza la consulta de horarios
+        $('#fecha').change(function() {
+            var fechaSeleccionada = $(this).val();
+            
+            // Realizar solicitud AJAX al backend para obtener los horarios
+            $.ajax({
+                url: '/obtener_horarios',  // URL para obtener los horarios
+                method: 'POST',
+                data: { fecha: fechaSeleccionada },  // Enviar la fecha seleccionada
+                success: function(response) {
+                    console.log("Respuesta del servidor:", response);
+                    if (response.horarios && response.horarios.length > 0) {
+                        // Limpiar el select de horas
+                        let selectHoras = $('#hora');
+                        selectHoras.empty();  // Vaciar el select de horas antes de agregar nuevas opciones
+
+                        // Agregar las horas al select
+                        response.horarios.forEach(function(hora) {
+                            selectHoras.append(`<option value="${hora}">${hora}</option>`);
+                        });
+
+                        // Mostrar el mensaje de horarios disponibles
+                        $('#horariosMensaje').html("<p>Horarios disponibles:</p>");
+                    } else {
+                        // No hay horarios disponibles
+                        $('#horariosMensaje').html("<p>No hay horarios disponibles para la fecha seleccionada.</p>");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error:", error);
+                    $('#horariosMensaje').html("<p>Hubo un error al obtener los horarios. Intenta nuevamente.</p>");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
