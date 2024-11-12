@@ -1,4 +1,6 @@
 blinker==1.8.2
+certifi==2024.8.30
+charset-normalizer==3.4.0
 click==8.1.7
 colorama==0.4.6
 defusedxml==0.7.1
@@ -9,6 +11,7 @@ flask==3.0.3
 Flask-MySQL==1.5.2
 fonttools==4.54.1
 fpdf2==2.8.1
+idna==3.10
 importlib-metadata==8.5.0
 itsdangerous==2.2.0
 jinja2==3.1.4
@@ -23,9 +26,12 @@ pypng==0.20220715.0
 python-dateutil==2.9.0.post0
 pytz==2024.2
 qrcode==7.4.2
+requests==2.32.3
 six==1.16.0
+stripe==11.2.0
 typing-extensions==4.12.0
 tzdata==2024.2
+urllib3==2.2.3
 virtualenv==20.26.2
 werkzeug==3.0.6
 zipp==3.20.2
